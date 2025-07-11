@@ -1,9 +1,9 @@
 import Interpreter.Command.{GoTo, Label, Move}
 import Interpreter.Direction.Up
 import org.scalajs.dom
-import org.scalajs.dom.{HTMLCanvasElement, html}
+import org.scalajs.dom.{HTMLCanvasElement, HTMLElement, SVGElement, html}
 
-import scala.scalajs.js.timers.{setInterval, clearInterval}
+import scala.scalajs.js.timers.{clearInterval, setInterval}
 
 @main def main(): Unit = {
   println(s"JS: ${Test.hi()}")
@@ -20,6 +20,7 @@ import scala.scalajs.js.timers.{setInterval, clearInterval}
         world.tick()
         WorldCanvas.render(world)
         updateStateView()
+        updateStatisticsView(world.statistics.toMap)
       }
     }
 
@@ -97,5 +98,26 @@ def updateCell(id: String, text: String): Unit = {
 def updateEnergy(energy: Int): Unit = {
   val doc = dom.document.getElementById("energy").asInstanceOf[html.Heading]
   doc.textContent = s"Energy: $energy"
+}
+
+def updateStatisticsView(map: Map[String, Statistic]): Unit = {
+  val tableBody = dom.document.getElementById("statisticsTableBody").asInstanceOf[html.TableSection]
+
+  // Clear existing rows to avoid duplicates or outdated information
+  // Alternatively, you could iterate and update existing rows if they match,
+  // but clearing and re-adding is often simpler for dynamic tables.
+  while (tableBody.hasChildNodes()) {
+    tableBody.removeChild(tableBody.firstChild)
+  }
+
+  for((genealogyId, stat) <- map) {
+    val row = tableBody.insertRow().asInstanceOf[html.TableRow]
+
+    val idCell = row.insertCell().asInstanceOf[html.TableCell]
+    idCell.textContent = genealogyId
+
+    val countCell = row.insertCell().asInstanceOf[html.TableCell]
+    countCell.textContent = stat.unitCount.toString
+  }
 }
 

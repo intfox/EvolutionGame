@@ -12,8 +12,10 @@ class World(playerUnits: List[PlayerUnit], seed: Int) {
   val height = 50
   val units = mutable.ListBuffer.empty[UnitObject]
   val foods = mutable.ListBuffer.empty[Food]
+  val statistics = mutable.HashMap.empty[String, Statistic]
 
   for (playerUnit <- playerUnits) {
+    statistics(playerUnit.genealogyId) = Statistic(1)
     units.addOne(unitObject(playerUnit))
   }
 
@@ -60,6 +62,7 @@ class World(playerUnits: List[PlayerUnit], seed: Int) {
       val event = scala.util.Try(Interpreter.eval(unit, rand, scan))
       if (unit.energy <= 0) {
         println(s"Die: energy ${unit.energy}")
+        statistics(unit.genealogyId).unitCount -= 1
         units.remove(i)
       } else {
         event match {
@@ -81,6 +84,7 @@ class World(playerUnits: List[PlayerUnit], seed: Int) {
             if (possibleForNewUnit.nonEmpty) {
               val (newX, newY) = possibleForNewUnit(rand.nextInt(possibleForNewUnit.length))
               unit.energy -= givingEnergy
+              statistics(unit.genealogyId).unitCount += 1
               units.addOne(unit.copy(energy = givingEnergy, id = rand.nextInt(), x = newX, y = newY, program = unit.program.copy(
                 state = State(array = Array.fill(arraySize)(0), currentLine = -1)
               )))
@@ -88,6 +92,7 @@ class World(playerUnits: List[PlayerUnit], seed: Int) {
           }
           case Failure(err) =>
             println(s"Die: ${err.getMessage}")
+            statistics(unit.genealogyId).unitCount -= 1
             units.remove(i)
         }
       }
@@ -133,3 +138,5 @@ case class State(val array: Array[Int], var currentLine: Int)
 case class Food(val energy: Int, val x: Int, val y: Int)
 
 case class PlayerUnit(val genealogyId: String, val code: Code)
+
+case class Statistic(var unitCount: Int)
