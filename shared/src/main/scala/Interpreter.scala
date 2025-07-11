@@ -76,11 +76,16 @@ object Interpreter {
     commands.toArray
   }
 
-  def eval(unit: UnitObject, rand: Random, scan: (objectType: ObjectType) => List[(Int, Int)]): Either[String, Event] = {
-
+  def eval(unit: UnitObject, rand: Random, scan: (objectType: ObjectType) => List[(Int, Int)]): Event = {
+    if(unit.program.state.currentLine == -1) {
+      unit.program.state.currentLine = unit.program.code.commands.indexWhere {
+        case Some(Command.Label("START")) => true
+        case _ => false
+      }
+      if(unit.program.state.currentLine == -1) throw EvalError("Label start not found")
+    }
     var exit = false
     var event: Event | Null = null
-    var error: String | Null = null
     while (!exit) {
       val curCommand = unit.program.code.commands(unit.program.state.currentLine)
 //      println(curCommand)
@@ -160,13 +165,13 @@ object Interpreter {
         if (index != -1) {
           unit.program.state.currentLine = index
         } else {
-          error = s"Not found label $to"
+          throw EvalError(s"Not found label $to")
         }
       case Command.GoTo(to: Int) =>
         if (unit.program.code.commands.array.length > to) {
           unit.program.state.currentLine = to
         } else {
-          error = s"Not found line $to"
+          throw EvalError(s"Not found line $to")
         }
     }
 
@@ -175,13 +180,13 @@ object Interpreter {
       case number: Int => number
     }
 
-    (error, event) match {
-      case (err: String, _) => Left(err)
-      case (null, null) => Left("Not have events")
-      case (null, event) => Right(event)
+    event match {
+      case null => throw EvalError("Not have events")
+      case event: Event => event
     }
   }
 
+  case class EvalError(val msg: String) extends Throwable(msg)
 
   private def commandEnergyCost(command: Command): Int = command match {
     case Command.Move(_) => 10

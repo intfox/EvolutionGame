@@ -34,7 +34,8 @@ import scala.scalajs.js.timers.{ setInterval, clearInterval }
   enterButton.onclick = { _ =>
     // Print the text from the textarea to the console
     val code = Interpreter.parse(codeTextarea.value)
-    world = World(UnitObject("test", 0, 0, Program(Code(code), State(Array.empty, 0)), 200), 10)
+//    world = World(UnitObject("test", 0, 0, Program(Code(code), State(Array.empty, 0)), 200), 10)
+    world = World(List(PlayerUnit("test", Code(code))), 10)
     println(codeTextarea.value)
   }
 
