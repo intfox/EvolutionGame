@@ -8,6 +8,7 @@ lazy val root = (project in file("."))
     name := "EvolutionGame"
   )
 
+val circeVersion = "0.14.14"
 
 lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   settings(
@@ -21,5 +22,8 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   jsSettings(
     // Add JS-specific settings here
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.8.0",
-    scalaJSUseMainModuleInitializer := true,
+    libraryDependencies += "io.circe" %%% "circe-core" % circeVersion,
+    libraryDependencies += "io.circe" %%% "circe-generic" % circeVersion,
+    libraryDependencies += "io.circe" %%% "circe-parser" % circeVersion,
+    scalaJSUseMainModuleInitializer := false,
   )

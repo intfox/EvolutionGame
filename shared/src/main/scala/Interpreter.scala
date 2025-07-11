@@ -9,6 +9,39 @@ object Interpreter {
 
   val arraySize = 30
 
+  def commandsToString(commands: Array[Option[Command]]): Array[String] = {
+    val str = Array.empty[String]
+    for((command, i) <- commands.zipWithIndex) {
+      str(i) = command match {
+        case Some(value) => value match {
+          case Command.Move(direction) => s"MOVE ${direction.toString}"
+          case Command.Set(address, value) => s"SET ${boxAddr(address)}, ${boxAddr(value)}"
+          case Command.Scan(address, objectType) => s"SCAN ${boxAddr(address)}, ${objectType.toString}"
+          case Command.Add(operand1, operand2) => s"ADD ${boxAddr(operand1)}, ${boxAddr(operand2)}"
+          case Command.Sub(operand1, operand2) => s"SUB ${boxAddr(operand1)}, ${boxAddr(operand2)}"
+          case Command.Rand(address, maxValue) => s"RAND ${boxAddr(address)}, $maxValue"
+          case Command.GoTo(to) => s"GOTO $to"
+          case Command.Label(name) => s"$name:"
+          case Command.If(condition, goTo) =>
+            s"IF ${boxAddr(condition.leftOperand)} ${operatorToString(condition.operator)} ${boxAddr(condition.rightOperand)} GOTO ${goTo.to}"
+          case Command.Reproduce(givingEnergy) => s"REPRODUCE $givingEnergy"
+          case Command.Wait() => "WAIT"
+        }
+        case None => ""
+      }
+    }
+    def operatorToString(operator: Operator): String = operator match {
+      case Operator.Less => "<"
+      case Operator.Greater => ">"
+      case Operator.Equal => "="
+    }
+    def boxAddr(intOrAddr: Int | ArrayAddress): String = intOrAddr match {
+      case int: Int => int.toString
+      case ArrayAddress(addr) => s"A$addr"
+    }
+    str
+  }
+
   def parse(source: String): Array[Option[Command]] = {
     val labelPattern = "([A-Z]+):".r
     val movePattern = "MOVE (UP|DOWN|RIGHT|LEFT)".r
@@ -23,7 +56,7 @@ object Interpreter {
     val reproducePattern = "REPRODUCE ([0-9]+)".r
     import Command._
     val commands = ListBuffer.empty[Option[Command]]
-    for (line <- source.toUpperCase.split('\n')) {
+    for ((line, i) <- source.toUpperCase.split('\n').zipWithIndex) {
       val command = if (line.strip().nonEmpty) Some(line.strip() match {
         case labelPattern(labelName) => Label(labelName)
         case movePattern(direction) => direction match {
@@ -65,7 +98,7 @@ object Interpreter {
           case "ALL" => ObjectType.All
         })
         case reproducePattern(givingEnergy) => Reproduce(givingEnergy.toInt)
-        case com => throw Error(s"command $com not supported")
+        case com => throw ParseError(s"line $i: command $com not supported")
       }) else None
       commands.addOne(command)
     }
@@ -75,6 +108,8 @@ object Interpreter {
 
     commands.toArray
   }
+
+  case class ParseError(msg: String) extends Throwable(msg)
 
   def eval(unit: UnitObject, rand: Random, scan: (objectType: ObjectType) => List[(Int, Int)]): Event = {
     if(unit.program.state.currentLine == -1) {

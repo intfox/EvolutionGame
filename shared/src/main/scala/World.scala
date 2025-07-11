@@ -61,7 +61,6 @@ class World(playerUnits: List[PlayerUnit], seed: Int) {
       }
       val event = scala.util.Try(Interpreter.eval(unit, rand, scan))
       if (unit.energy <= 0) {
-        println(s"Die: energy ${unit.energy}")
         statistics(unit.genealogyId).unitCount -= 1
         units.remove(i)
       } else {

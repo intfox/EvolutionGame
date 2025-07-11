@@ -4,6 +4,30 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
+
+        /* Основные стили для заголовка */
+        .header {
+            background-color: #ffffff; /* Нейтральный белый фон */
+            padding: 15px 20px; /* Отступы сверху/снизу и по бокам */
+            border-bottom: 1px solid #e0e0e0; /* Легкая граница снизу */
+            display: flex; /* Используем flexbox для выравнивания элементов */
+            justify-content: center; /* Центрируем ссылки по горизонтали */
+            align-items: center; /* Выравниваем по центру по вертикали */
+        }
+
+        /* Стили для навигационных ссылок */
+        .header nav a {
+            color: #333333; /* Темно-серый цвет текста */
+            text-decoration: none; /* Убираем подчеркивание */
+            padding: 0 15px; /* Отступы между ссылками */
+            font-size: 1.1em; /* Размер шрифта */
+            transition: color 0.3s ease; /* Плавный переход цвета при наведении */
+        }
+
+        /* Стили при наведении на ссылки */
+        .header nav a:hover {
+            color: #007bff; /* Легкий синий цвет при наведении */
+        }
         .tables-container-grid {
             display: grid; /* Делает элемент grid-контейнером */
             /* Создает 3 колонки, каждая из которых занимает равную долю доступного пространства */
@@ -30,6 +54,13 @@
     </style>
 </head>
 <body>
+    <header class="header">
+        <nav>
+            <a href="index.html">Мир</a>
+            <a href="editor.html">Редактор</a>
+            <a href="documentation.html">Документация</a>
+        </nav>
+    </header>
     <h1 id="test">Evolution game</h1>
     <table id="statisticsTable">
         <thead>
@@ -41,8 +72,13 @@
         <tbody id="statisticsTableBody">
         </tbody>
     </table>
+
     <div>
         <canvas id="worldCanvas" width="1000" height="500" style="border: 1px solid grey;"></canvas>
+
+        <div id="gCheckboxes" class="checkbox-container">
+        </div>
+        <button id="start">Start</button>
         <button id="speed1">x1</button>
         <button id="speed2">x2</button>
         <button id="speed4">x4</button>
@@ -94,5 +130,6 @@
         <h4 id="energy">Energy: </h4>
     </div>
     <script src="js/target/scala-3.3.6/foo-fastopt/main.js"></script>
+    <script>MainPage.run();</script>
 </body>
 </html>
