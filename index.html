@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        /* Основные стили для заголовка */
+        .header {
+            background-color: #ffffff; /* Нейтральный белый фон */
+            padding: 15px 20px; /* Отступы сверху/снизу и по бокам */
+            border-bottom: 1px solid #e0e0e0; /* Легкая граница снизу */
+            display: flex; /* Используем flexbox для выравнивания элементов */
+            justify-content: center; /* Центрируем ссылки по горизонтали */
+            align-items: center; /* Выравниваем по центру по вертикали */
+        }
+
+        /* Стили для навигационных ссылок */
+        .header nav a {
+            color: #333333; /* Темно-серый цвет текста */
+            text-decoration: none; /* Убираем подчеркивание */
+            padding: 0 15px; /* Отступы между ссылками */
+            font-size: 1.1em; /* Размер шрифта */
+            transition: color 0.3s ease; /* Плавный переход цвета при наведении */
+        }
+
+        /* Стили при наведении на ссылки */
+        .header nav a:hover {
+            color: #007bff; /* Легкий синий цвет при наведении */
+        }
+        .tables-container-grid {
+            display: grid; /* Делает элемент grid-контейнером */
+            /* Создает 3 колонки, каждая из которых занимает равную долю доступного пространства */
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px; /* Добавляет отступ между таблицами */
+        }
+
+        /* Опционально: стили для таблиц, как и выше */
+        table {
+            border-collapse: collapse;
+            width: auto;
+            margin: 0;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .current-line {
+            background-color: #add8e6;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav>
+            <a href="index.html">Мир</a>
+            <a href="editor.html">Редактор</a>
+            <a href="documentation.html">Документация</a>
+        </nav>
+    </header>
+    <h1 id="test">Evolution game</h1>
+    <table id="statisticsTable">
+        <thead>
+        <tr>
+            <th>Genealogy ID</th>
+            <th>Units Count</th>
+        </tr>
+        </thead>
+        <tbody id="statisticsTableBody">
+        </tbody>
+    </table>
+
+    <div>
+        <canvas id="worldCanvas" width="1000" height="500" style="border: 1px solid grey;"></canvas>
+
+        <div id="gCheckboxes" class="checkbox-container">
+        </div>
+        <button id="start">Start</button>
+        <button id="speed1">x1</button>
+        <button id="speed2">x2</button>
+        <button id="speed4">x4</button>
+    </div>
+    <div class="tables-container-grid">
+<!--        <div>-->
+<!--            <textarea id="code" cols="30" rows="50" class="numbered"></textarea>-->
+<!--            <button id="enterBtn">Enter</button>-->
+<!--        </div>-->
+        <table id="codeTable">
+            <tr><th>line</th><th>command</th></tr>
+        </table>
+        <table>
+            <tr><th>I</th><th>Value</th></tr>
+            <tr><td>A0</td><td id="A0">0</td></tr>
+            <tr><td>A1</td><td id="A1">0</td></tr>
+            <tr><td>A2</td><td id="A2">0</td></tr>
+            <tr><td>A3</td><td id="A3">0</td></tr>
+            <tr><td>A4</td><td id="A4">0</td></tr>
+            <tr><td>A5</td><td id="A5">0</td></tr>
+            <tr><td>A6</td><td id="A6">0</td></tr>
+            <tr><td>A7</td><td id="A7">0</td></tr>
+            <tr><td>A8</td><td id="A8">0</td></tr>
+            <tr><td>A9</td><td id="A9">0</td></tr>
+        </table>
+        <table>
+            <tr><th>I</th><th>Value</th></tr>
+            <tr><td>A10</td><td id="A10">0</td></tr>
+            <tr><td>A11</td><td id="A11">0</td></tr>
+            <tr><td>A12</td><td id="A12">0</td></tr>
+            <tr><td>A13</td><td id="A13">0</td></tr>
+            <tr><td>A14</td><td id="A14">0</td></tr>
+            <tr><td>A15</td><td id="A15">0</td></tr>
+            <tr><td>A16</td><td id="A16">0</td></tr>
+            <tr><td>A17</td><td id="A17">0</td></tr>
+            <tr><td>A18</td><td id="A18">0</td></tr>
+            <tr><td>A19</td><td id="A19">0</td></tr>
+        </table>
+        <table>
+            <tr><th>I</th><th>Value</th></tr>
+            <tr><td>A20</td><td id="A20">0</td></tr>
+            <tr><td>A21</td><td id="A21">0</td></tr>
+            <tr><td>A22</td><td id="A22">0</td></tr>
+            <tr><td>A23</td><td id="A23">0</td></tr>
+            <tr><td>A24</td><td id="A24">0</td></tr>
+            <tr><td>A25</td><td id="A25">0</td></tr>
+            <tr><td>A26</td><td id="A26">0</td></tr>
+            <tr><td>A27</td><td id="A27">0</td></tr>
+            <tr><td>A28</td><td id="A28">0</td></tr>
+            <tr><td>A29</td><td id="A29">0</td></tr>
+        </table>
+        <h4 id="energy">Energy: </h4>
+    </div>
+    <script src="main.js"></script>
+    <script>MainPage.run();</script>
+</body>
+</html>

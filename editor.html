@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой Редактор Кода</title>
+    <style>
+
+        /* Основные стили для заголовка */
+        .header {
+            background-color: #ffffff; /* Нейтральный белый фон */
+            padding: 15px 20px; /* Отступы сверху/снизу и по бокам */
+            border-bottom: 1px solid #e0e0e0; /* Легкая граница снизу */
+            display: flex; /* Используем flexbox для выравнивания элементов */
+            justify-content: center; /* Центрируем ссылки по горизонтали */
+            align-items: center; /* Выравниваем по центру по вертикали */
+        }
+
+        /* Стили для навигационных ссылок */
+        .header nav a {
+            color: #333333; /* Темно-серый цвет текста */
+            text-decoration: none; /* Убираем подчеркивание */
+            padding: 0 15px; /* Отступы между ссылками */
+            font-size: 1.1em; /* Размер шрифта */
+            transition: color 0.3s ease; /* Плавный переход цвета при наведении */
+        }
+
+        /* Стили при наведении на ссылки */
+        .header nav a:hover {
+            color: #007bff; /* Легкий синий цвет при наведении */
+        }
+        .code-editor-container {
+            display: flex;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 80%;
+            max-width: 900px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .line-numbers {
+            width: 40px;
+            padding: 10px 5px;
+            background-color: #eee;
+            color: #555;
+            text-align: right;
+            border-right: 1px solid #ccc;
+            user-select: none; /* Предотвращает выделение чисел */
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-y: hidden; /* Скрыть скроллбар */
+        }
+
+        .code-input {
+            flex-grow: 1;
+            border: none;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            outline: none; /* Убрать рамку при фокусе */
+            resize: none; /* Запретить изменение размера пользователем */
+            overflow-y: auto; /* Добавить скроллбар, если текст не помещается */
+            white-space: pre-wrap; /* Сохранять переносы строк и пробелы */
+            word-wrap: break-word; /* Переносить длинные слова */
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <nav>
+        <a href="index.html">Мир</a>
+        <a href="editor.html">Редактор</a>
+        <a href="documentation.html">Документация</a>
+    </nav>
+</header>
+<input id="genealogyIdInput" type="text">
+<select id="selectCode" onchange="Editor.onSelect()">
+</select>
+<h3 id="error" style="color:red;"></h3>
+<h3 id="success" style="color:green;"></h3>
+<div class="code-editor-container">
+    <div class="line-numbers" id="line-numbers">1</div>
+    <textarea class="code-input" id="codeInput" spellcheck="false" placeholder="Начните писать ваш код здесь..."></textarea>
+</div>
+<button onclick="Editor.save()">Save</button>
+<button>Delete</button>
+
+<script src="main.js"></script>
+<script>Editor.run();</script>
+<script>
+    const codeInput = document.getElementById('codeInput');
+    const genealogyIdInput = document.getElementById('genealogyIdInput');
+    const lineNumbers = document.getElementById('line-numbers');
+
+    let tempSave = localStorage.getItem("tempSave")
+    if(tempSave) {
+        codeInput.value = tempSave
+        genealogyIdInput.value = localStorage.getItem("tempSaveName")
+        updateLineNumbers()
+    }
+
+    // Функция для обновления нумерации строк
+    function updateLineNumbers() {
+        const lines = codeInput.value.split('\n');
+        let numbersHtml = '';
+        for (let i = 0; i <= lines.length - 1; i++) {
+            numbersHtml += `<div>${i}</div>`;
+        }
+        lineNumbers.innerHTML = numbersHtml;
+
+        // Синхронизация прокрутки
+        lineNumbers.scrollTop = codeInput.scrollTop;
+    }
+
+    // Обновляем нумерацию при вводе текста
+    codeInput.addEventListener('input', updateLineNumbers);
+
+    // Обновляем нумерацию при прокрутке текстового поля
+    codeInput.addEventListener('scroll', () => {
+        lineNumbers.scrollTop = codeInput.scrollTop;
+    });
+
+
+    function temporarySave() {
+        localStorage.setItem("tempSave", codeInput.value)
+        localStorage.setItem("tempSaveName", genealogyIdInput.value)
+    }
+
+    genealogyIdInput.addEventListener('input', temporarySave);
+    codeInput.addEventListener('input', temporarySave);
+
+    // Инициализация при загрузке страницы
+    updateLineNumbers();
+</script>
+</body>
+</html>
