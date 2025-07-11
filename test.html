@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой Редактор Кода</title>
+    <style>
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--            min-height: 100vh;-->
+<!--            background-color: #f0f2f5;-->
+<!--            margin: 0;-->
+<!--        }-->
+
+        .code-editor-container {
+            display: flex;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 80%;
+            max-width: 900px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .line-numbers {
+            width: 40px;
+            padding: 10px 5px;
+            background-color: #eee;
+            color: #555;
+            text-align: right;
+            border-right: 1px solid #ccc;
+            user-select: none; /* Предотвращает выделение чисел */
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-y: hidden; /* Скрыть скроллбар */
+        }
+
+        .code-input {
+            flex-grow: 1;
+            border: none;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            outline: none; /* Убрать рамку при фокусе */
+            resize: none; /* Запретить изменение размера пользователем */
+            overflow-y: auto; /* Добавить скроллбар, если текст не помещается */
+            white-space: pre-wrap; /* Сохранять переносы строк и пробелы */
+            word-wrap: break-word; /* Переносить длинные слова */
+        }
+    </style>
+</head>
+<body>
+<div class="code-editor-container">
+    <div class="line-numbers" id="line-numbers">1</div>
+    <textarea class="code-input" id="code-input" spellcheck="false" placeholder="Начните писать ваш код здесь..."></textarea>
+</div>
+
+<script>
+    const codeInput = document.getElementById('code-input');
+    const lineNumbers = document.getElementById('line-numbers');
+
+    // Функция для обновления нумерации строк
+    function updateLineNumbers() {
+        const lines = codeInput.value.split('\n');
+        let numbersHtml = '';
+        for (let i = 0; i <= lines.length - 1; i++) {
+            numbersHtml += `<div>${i}</div>`;
+        }
+        lineNumbers.innerHTML = numbersHtml;
+
+        // Синхронизация прокрутки
+        lineNumbers.scrollTop = codeInput.scrollTop;
+    }
+
+    // Обновляем нумерацию при вводе текста
+    codeInput.addEventListener('input', updateLineNumbers);
+
+    // Обновляем нумерацию при прокрутке текстового поля
+    codeInput.addEventListener('scroll', () => {
+        lineNumbers.scrollTop = codeInput.scrollTop;
+    });
+
+    // Инициализация при загрузке страницы
+    updateLineNumbers();
+</script>
+</body>
+</html>
