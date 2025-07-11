@@ -81,7 +81,7 @@ class World(playerUnits: List[PlayerUnit], seed: Int) {
             if (possibleForNewUnit.nonEmpty) {
               val (newX, newY) = possibleForNewUnit(rand.nextInt(possibleForNewUnit.length))
               unit.energy -= givingEnergy
-              units.addOne(unit.copy(energy = givingEnergy, x = newX, y = newY, program = unit.program.copy(
+              units.addOne(unit.copy(energy = givingEnergy, id = rand.nextInt(), x = newX, y = newY, program = unit.program.copy(
                 state = State(array = Array.fill(arraySize)(0), currentLine = -1)
               )))
             }
@@ -106,6 +106,7 @@ class World(playerUnits: List[PlayerUnit], seed: Int) {
   private def unitObject(userUnit: PlayerUnit): UnitObject =
     UnitObject(
       genealogyId = userUnit.genealogyId,
+      id = rand.nextInt(),
       x = rand.nextInt(width),
       y = rand.nextInt(height),
       program = Program(
@@ -121,7 +122,7 @@ class World(playerUnits: List[PlayerUnit], seed: Int) {
 
 type Event = Move | Wait | Reproduce
 
-case class UnitObject(val genealogyId: String, var x: Int, var y: Int, val program: Program, var energy: Int)
+case class UnitObject(val genealogyId: String, val id: Int, var x: Int, var y: Int, val program: Program, var energy: Int)
 
 case class Program(val code: Code, val state: State)
 

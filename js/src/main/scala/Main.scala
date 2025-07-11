@@ -3,7 +3,7 @@ import Interpreter.Direction.Up
 import org.scalajs.dom
 import org.scalajs.dom.{HTMLCanvasElement, html}
 
-import scala.scalajs.js.timers.{ setInterval, clearInterval }
+import scala.scalajs.js.timers.{setInterval, clearInterval}
 
 @main def main(): Unit = {
   println(s"JS: ${Test.hi()}")
@@ -11,6 +11,7 @@ import scala.scalajs.js.timers.{ setInterval, clearInterval }
   var world: World | Null = null
 
   var speed = 1
+  var observedUnitId = 0
 
   def startInterval() =
     setInterval(1000 / speed) {
@@ -18,39 +19,63 @@ import scala.scalajs.js.timers.{ setInterval, clearInterval }
         println(s"Units count: ${world.units.length}")
         world.tick()
         WorldCanvas.render(world)
-        if (world.units.nonEmpty) {
-          updateTable(world)
-          updateEnergy(world.units(0).energy)
-        }
+        updateStateView()
       }
     }
 
+  def updateStateView(): Unit = {
+    world.units.find(_.id == observedUnitId) match {
+      case Some(unit) =>
+        updateTable(unit)
+        updateEnergy(unit.energy)
+      case None => ()
+    }
+  }
+
+  WorldCanvas.init((x, y) => {
+    if (world != null) {
+      for (unit <- world.units) {
+        if (unit.x == x && unit.y == y) {
+          observedUnitId = unit.id
+          WorldCanvas.observedUnitId = observedUnitId
+        }
+      }
+    }
+    updateStateView()
+    WorldCanvas.render(world)
+  })
   var intervalHandler = startInterval()
 
   val enterButton = dom.document.getElementById("enterBtn").asInstanceOf[html.Button]
   val codeTextarea = dom.document.getElementById("code").asInstanceOf[html.TextArea]
 
+  val anotherGenealogy = scala.collection.mutable.ListBuffer.empty[Code]
+
   // Add a click event listener to the button
   enterButton.onclick = { _ =>
     // Print the text from the textarea to the console
     val code = Interpreter.parse(codeTextarea.value)
-//    world = World(UnitObject("test", 0, 0, Program(Code(code), State(Array.empty, 0)), 200), 10)
-    world = World(List(PlayerUnit("test", Code(code))), 10)
+    //    world = World(UnitObject("test", 0, 0, Program(Code(code), State(Array.empty, 0)), 200), 10)
+    world = World(PlayerUnit("test", Code(code)) +: anotherGenealogy.toList.zipWithIndex.map((c, i) => PlayerUnit(s"test${i}", c)), 10)
+    observedUnitId = world.units(0).id
+    WorldCanvas.observedUnitId = observedUnitId
+    //    world = World(List(PlayerUnit("test", Code(code))), 10)
+    anotherGenealogy.addOne(Code(code))
     println(codeTextarea.value)
   }
 
   dom.document.getElementById("speed1").asInstanceOf[html.Button].onclick = (_) =>
-    if(speed != 1) {
+    if (speed != 1) {
       speed = 1
       clearInterval(intervalHandler)
       intervalHandler = startInterval()
     }
-  dom.document.getElementById("speed2").asInstanceOf[html.Button].onclick = (_) => if(speed != 2) {
+  dom.document.getElementById("speed2").asInstanceOf[html.Button].onclick = (_) => if (speed != 2) {
     speed = 2
     clearInterval(intervalHandler)
     intervalHandler = startInterval()
   }
-  dom.document.getElementById("speed4").asInstanceOf[html.Button].onclick = (_) => if(speed != 4) {
+  dom.document.getElementById("speed4").asInstanceOf[html.Button].onclick = (_) => if (speed != 4) {
     speed = 4
     clearInterval(intervalHandler)
     intervalHandler = startInterval()
@@ -58,8 +83,8 @@ import scala.scalajs.js.timers.{ setInterval, clearInterval }
 
 }
 
-def updateTable(world: World): Unit = {
-  for((value, i) <- world.units(0).program.state.array.zipWithIndex) {
+def updateTable(unit: UnitObject): Unit = {
+  for ((value, i) <- unit.program.state.array.zipWithIndex) {
     updateCell(s"A$i", value.toString)
   }
 }

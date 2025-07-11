@@ -4,21 +4,29 @@ import org.scalajs.dom.html
 object WorldCanvas {
   val canvas = dom.document.getElementById("worldCanvas").asInstanceOf[html.Canvas]
   val myGenealogyId = "test"
+  var observedUnitId = 0
   def render(world: World): Unit = {
     val ctx = canvas.getContext("2d")
       .asInstanceOf[dom.CanvasRenderingContext2D]
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     for(unit <- world.units) {
-      drawCircle(unit.x, unit.y, if(unit.genealogyId == myGenealogyId) "green" else "red")
+      drawCircle(unit.x, unit.y, if(unit.genealogyId == myGenealogyId) "green" else "red", highlighted = unit.id == observedUnitId)
     }
     for(food <- world.foods) {
       drawCircle(food.x, food.y, "white")
     }
-//    drawGrid()
-//    drawCircle(1, 1, "white")
-//    drawCircle(1, 2, "green")
-//    drawCircle(1, 3, "red")
+  }
+
+  def init(onClick: (x: Int, y: Int) => Unit): Unit = {
+    canvas.onclick = (e: dom.MouseEvent) => {
+      val rect = canvas.getBoundingClientRect()
+      val x = e.clientX - rect.left // X-координата клика относительно canvas
+      val y = e.clientY - rect.top // Y-координата клика относительно canvas
+      val resX = (x / 10).toInt
+      val resY = (y / 10).toInt
+      onClick(resX, resY)
+    }
   }
 
   def drawGrid(): Unit = {
@@ -51,7 +59,7 @@ object WorldCanvas {
     }
   }
 
-  def drawCircle(x: Int, y: Int, color: String): Unit = {
+  def drawCircle(x: Int, y: Int, color: String, highlighted: Boolean = false): Unit = {
     val ctx = canvas.getContext("2d")
       .asInstanceOf[dom.CanvasRenderingContext2D]
 
@@ -59,7 +67,7 @@ object WorldCanvas {
     ctx.arc(x * 10 + 5, y * 10 + 5, 5, 0, 2 * Math.PI)
     ctx.fillStyle = color
     ctx.fill()
-    ctx.lineWidth = 1
+    ctx.lineWidth = if(!highlighted) 1 else 2
     ctx.stroke()
   }
 }

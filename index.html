@@ -7,7 +7,7 @@
         .tables-container-grid {
             display: grid; /* Делает элемент grid-контейнером */
             /* Создает 3 колонки, каждая из которых занимает равную долю доступного пространства */
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 20px; /* Добавляет отступ между таблицами */
         }
 
@@ -30,16 +30,18 @@
     </style>
 </head>
 <body>
-    <h1 id="test">test text from html</h1>
-    <button id="speed1">x1</button>
-    <button id="speed2">x2</button>
-    <button id="speed4">x4</button>
-    <canvas id="worldCanvas" width="1000" height="500" style="border: 1px solid grey;"></canvas>
-    <label>
-        <textarea id="code" cols="30" rows="50" class="numbered"></textarea>
-        <button id="enterBtn">Enter</button>
-    </label>
+    <h1 id="test">Evolution game</h1>
+    <div>
+        <canvas id="worldCanvas" width="1000" height="500" style="border: 1px solid grey;"></canvas>
+        <button id="speed1">x1</button>
+        <button id="speed2">x2</button>
+        <button id="speed4">x4</button>
+    </div>
     <div class="tables-container-grid">
+        <div>
+            <textarea id="code" cols="30" rows="50" class="numbered"></textarea>
+            <button id="enterBtn">Enter</button>
+        </div>
         <table>
             <tr><th>I</th><th>Value</th></tr>
             <tr><td>A0</td><td id="A0">0</td></tr>
