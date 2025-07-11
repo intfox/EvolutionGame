@@ -19,16 +19,12 @@ object Editor {
     }
     val selectCode = dom.document.getElementById("selectCode").asInstanceOf[html.Select]
     for((genId, _) <- getFromStorage()) {
-      println(s"create option: ${genId}")
-      println(s"select: ${selectCode}")
       val option = dom.document.createElement("option").asInstanceOf[html.Option]
       option.value = genId
       option.textContent = genId
       selectCode.appendChild(option)
     }
-    //    Interpreter.Command.fromOrdinal()
-//    val test: Interpreter.ArrayAddress | Int = Interpreter.ArrayAddress(123)
-//    println(s"Test: ${decode[Interpreter.ArrayAddress](test.asJson.toString)}")
+
   }
 
   @JSExport
@@ -58,20 +54,6 @@ object Editor {
         val errorText = dom.document.getElementById("error").asInstanceOf[html.Heading]
         errorText.textContent = s"${err.getMessage}"
     }
-
-//    println(codeTextarea.value)
-    // Add a click event listener to the button
-//    enterButton.onclick = { _ =>
-      // Print the text from the textarea to the console
-
-      //    world = World(UnitObject("test", 0, 0, Program(Code(code), State(Array.empty, 0)), 200), 10)
-//      world = World(PlayerUnit("test", Code(code)) +: anotherGenealogy.toList.zipWithIndex.map((c, i) => PlayerUnit(s"test${i}", c)), 10)
-//      observedUnitId = world.units(0).id
-//      WorldCanvas.observedUnitId = observedUnitId
-      //    world = World(List(PlayerUnit("test", Code(code))), 10)
-//      anotherGenealogy.addOne(Code(code))
-
-//    }
   }
 
   def saveToStorage(generationId: String, code: String) = {

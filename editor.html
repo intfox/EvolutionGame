@@ -93,7 +93,15 @@
 <script>Editor.run();</script>
 <script>
     const codeInput = document.getElementById('codeInput');
+    const genealogyIdInput = document.getElementById('genealogyIdInput');
     const lineNumbers = document.getElementById('line-numbers');
+
+    let tempSave = localStorage.getItem("tempSave")
+    if(tempSave) {
+        codeInput.value = tempSave
+        genealogyIdInput.value = localStorage.getItem("tempSaveName")
+        updateLineNumbers()
+    }
 
     // Функция для обновления нумерации строк
     function updateLineNumbers() {
@@ -115,6 +123,15 @@
     codeInput.addEventListener('scroll', () => {
         lineNumbers.scrollTop = codeInput.scrollTop;
     });
+
+
+    function temporarySave() {
+        localStorage.setItem("tempSave", codeInput.value)
+        localStorage.setItem("tempSaveName", genealogyIdInput.value)
+    }
+
+    genealogyIdInput.addEventListener('input', temporarySave);
+    codeInput.addEventListener('input', temporarySave);
 
     // Инициализация при загрузке страницы
     updateLineNumbers();

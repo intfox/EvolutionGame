@@ -3,7 +3,7 @@ import org.scalajs.dom.html
 
 object WorldCanvas {
   val canvas = dom.document.getElementById("worldCanvas").asInstanceOf[html.Canvas]
-  val myGenealogyId = "test"
+  var myGenealogyId = "test"
   var observedUnitId = 0
   def render(world: World): Unit = {
     val ctx = canvas.getContext("2d")

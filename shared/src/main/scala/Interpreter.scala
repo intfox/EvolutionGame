@@ -10,13 +10,13 @@ object Interpreter {
   val arraySize = 30
 
   def commandsToString(commands: Array[Option[Command]]): Array[String] = {
-    val str = Array.empty[String]
+    val str = Array.fill(commands.length)("")
     for((command, i) <- commands.zipWithIndex) {
       str(i) = command match {
         case Some(value) => value match {
-          case Command.Move(direction) => s"MOVE ${direction.toString}"
+          case Command.Move(direction) => s"MOVE ${direction.toString.toUpperCase}"
           case Command.Set(address, value) => s"SET ${boxAddr(address)}, ${boxAddr(value)}"
-          case Command.Scan(address, objectType) => s"SCAN ${boxAddr(address)}, ${objectType.toString}"
+          case Command.Scan(address, objectType) => s"SCAN ${boxAddr(address)}, ${objectType.toString.toUpperCase}"
           case Command.Add(operand1, operand2) => s"ADD ${boxAddr(operand1)}, ${boxAddr(operand2)}"
           case Command.Sub(operand1, operand2) => s"SUB ${boxAddr(operand1)}, ${boxAddr(operand2)}"
           case Command.Rand(address, maxValue) => s"RAND ${boxAddr(address)}, $maxValue"

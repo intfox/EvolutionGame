@@ -31,19 +31,21 @@ object MainPage {
     def updateStateView(): Unit = {
       world.units.find(_.id == observedUnitId) match {
         case Some(unit) =>
+          updateCodeTableView(unit.program.state.currentLine - 1)
           updateTable(unit)
           updateEnergy(unit.energy)
         case None => ()
       }
     }
 
-
     WorldCanvas.init((x, y) => {
       if (world != null) {
         for (unit <- world.units) {
           if (unit.x == x && unit.y == y) {
             observedUnitId = unit.id
+            initCodeTableView(unit.program.code)
             WorldCanvas.observedUnitId = observedUnitId
+            WorldCanvas.myGenealogyId = unit.genealogyId
           }
         }
       }
@@ -77,6 +79,38 @@ object MainPage {
       clearInterval(intervalHandler)
       intervalHandler = startInterval()
     }
+  }
+}
+
+def updateCodeTableView(currentLine: Int): Unit = {
+  for(previousLine <- dom.document.getElementsByClassName("current-line")) {
+    previousLine.asInstanceOf[html.TableRow].className = ""
+  }
+  val lineRow = dom.document.getElementById(s"line$currentLine").asInstanceOf[html.TableRow]
+  lineRow.className = "current-line"
+}
+
+def initCodeTableView(code: Code): Unit = {
+  val table = dom.document.getElementById("codeTable").asInstanceOf[html.Table]
+  table.replaceChildren()
+  val row = dom.document.createElement("tr").asInstanceOf[html.TableRow]
+  val lineHeader = dom.document.createElement("th")
+  lineHeader.textContent = "line"
+  val commandHeader = dom.document.createElement("th")
+  commandHeader.textContent = "command"
+  row.appendChild(lineHeader)
+  row.appendChild(commandHeader)
+  table.appendChild(row)
+  for((line, i) <- Interpreter.commandsToString(code.commands).zipWithIndex) {
+    val row = dom.document.createElement("tr").asInstanceOf[html.TableRow]
+    row.id = s"line$i"
+    val lineCell = dom.document.createElement("td").asInstanceOf[html.TableCell]
+    lineCell.textContent = i.toString
+    val commandCell = dom.document.createElement("td").asInstanceOf[html.TableCell]
+    commandCell.textContent = line
+    row.appendChild(lineCell)
+    row.appendChild(commandCell)
+    table.appendChild(row)
   }
 }
 
