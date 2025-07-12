@@ -1962,7 +1962,7 @@ function $h_LMain$package$() {
 }
 $h_LMain$package$.prototype = $c_LMain$package$.prototype;
 $c_LMain$package$.prototype.updateCodeTableView__I__V = (function(currentLine) {
-  var domList = document.getElementsByClassName("current-line");
+  var domList = document.getElementsByClassName("bg-blue-100");
   var this$2 = new $c_Lorg_scalajs_dom_DOMList$DOMListSeq(domList);
   var it = this$2.iterator__sc_Iterator();
   while ($n(it).hasNext__Z()) {
@@ -1970,19 +1970,11 @@ $c_LMain$package$.prototype.updateCodeTableView__I__V = (function(currentLine) {
     x0.className = "";
   }
   var lineRow = document.getElementById(("line" + currentLine));
-  lineRow.className = "current-line";
+  lineRow.className = "bg-blue-100";
 });
 $c_LMain$package$.prototype.initCodeTableView__LCode__V = (function(code) {
   var table = document.getElementById("codeTable");
   table.replaceChildren();
-  var row = document.createElement("tr");
-  var lineHeader = document.createElement("th");
-  lineHeader.textContent = "line";
-  var commandHeader = document.createElement("th");
-  commandHeader.textContent = "command";
-  row.appendChild(lineHeader);
-  row.appendChild(commandHeader);
-  table.appendChild(row);
   var xs = $m_LInterpreter$().commandsToString__As_Option__AT($n(code).LCode__f_commands);
   var xs$1 = $m_sc_ArrayOps$().zipWithIndex$extension__O__AT2(xs);
   var p = new $c_sjsr_AnonFunction1_$$Lambda$3aa60c34ef08a878abffbf4628007cc68fa3c7ab(((x$1) => {
@@ -2001,15 +1993,17 @@ $c_LMain$package$.prototype.initCodeTableView__LCode__V = (function(code) {
         if ((x$1$2 !== null)) {
           var line$1 = $as_T($n(x$1$2).T2__f__1);
           var i$2 = $uI($n(x$1$2).T2__f__2);
-          var row$1 = document.createElement("tr");
-          row$1.id = ("line" + i$2);
+          var row = document.createElement("tr");
+          row.id = ("line" + i$2);
           var lineCell = document.createElement("td");
           lineCell.textContent = ("" + i$2);
+          lineCell.className = "px-6 py-2 whitespace-nowrap text-sm text-gray-900";
           var commandCell = document.createElement("td");
           commandCell.textContent = line$1;
-          row$1.appendChild(lineCell);
-          row$1.appendChild(commandCell);
-          table.appendChild(row$1);
+          commandCell.className = "px-6 py-2 whitespace-nowrap text-sm text-gray-900";
+          row.appendChild(lineCell);
+          row.appendChild(commandCell);
+          table.appendChild(row);
           break matchResult7;
         }
         throw new $c_s_MatchError(x$1$2);
@@ -2074,9 +2068,11 @@ $c_LMain$package$.prototype.updateStatisticsView__sci_Map__V = (function(map) {
         var row = tableBody.insertRow();
         var idCell = row.insertCell();
         idCell.textContent = genealogyId$1;
+        idCell.className = "px-6 py-4 whitespace-nowrap text-sm text-gray-900";
         var countCell = row.insertCell();
         var this$2 = $n(stat$1).LStatistic__f_unitCount;
         countCell.textContent = ("" + this$2);
+        countCell.className = "px-6 py-4 whitespace-nowrap text-sm text-gray-900";
         break matchResult11;
       }
       throw new $c_s_MatchError(x$1$3);
@@ -2091,24 +2087,28 @@ $c_LMain$package$.prototype.checkBoxView__V = (function() {
     var x$1$1 = $as_T2(x$1);
     return ((x$1$1 !== null) && ($as_T($n(x$1$1).T2__f__1), $as_T($n(x$1$1).T2__f__2), true));
   }));
-  var this$2 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$1, p);
+  var this$5 = $ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$1, p);
   var f = new $c_sjsr_AnonFunction1_$$Lambda$3aa60c34ef08a878abffbf4628007cc68fa3c7ab(((x$1$2) => {
     var x$1$3 = $as_T2(x$1$2);
     if ((x$1$3 !== null)) {
       var genealogyId$1 = $as_T($n(x$1$3).T2__f__1);
       $as_T($n(x$1$3).T2__f__2);
-      var input = document.createElement("input");
-      input.type = "checkbox";
+      var x = ("" + genealogyId$1);
+      var this$3 = $m_s_Console$();
+      var this$4 = $n(this$3.out__Ljava_io_PrintStream());
+      this$4.java$lang$JSConsoleBasedPrintStream$$printString__T__V((x + "\n"));
+      var baseCheckbox = document.getElementById("gCheckboxBase").cloneNode(true);
+      baseCheckbox.style.display = "flex";
+      var input = baseCheckbox.querySelector("input");
       input.id = ("check" + genealogyId$1);
-      var label = document.createElement("label");
+      var label = baseCheckbox.querySelector("label");
       label.textContent = genealogyId$1;
       label.htmlFor = genealogyId$1;
-      gCheckboxes.appendChild(input);
-      return gCheckboxes.appendChild(label);
+      return gCheckboxes.appendChild(baseCheckbox);
     }
     throw new $c_s_MatchError(x$1$3);
   }));
-  $n(this$2.filtered__sc_Iterable()).foreach__F1__V(f);
+  $n(this$5.filtered__sc_Iterable()).foreach__F1__V(f);
 });
 var $d_LMain$package$ = new $TypeData().initClass($c_LMain$package$, "Main$package$", ({
   LMain$package$: 1
