@@ -242,6 +242,13 @@ function $dp_hashCode__I(instance) {
     }
   }
 }
+function $dp_isBlank__Z(instance) {
+  if (((typeof instance) === "string")) {
+    return $f_T__isBlank__Z(instance);
+  } else {
+    return instance.isBlank__Z();
+  }
+}
 function $dp_lastIndexOf__I__I(instance, x0) {
   if (((typeof instance) === "string")) {
     return $f_T__lastIndexOf__I__I(instance, x0);
@@ -1149,7 +1156,16 @@ $c_LEditor$.prototype.save__V = (function() {
   var genealogyIdInput = document.getElementById("genealogyIdInput");
   try {
     $m_LInterpreter$().parse__T__As_Option($as_T(codeTextarea.value));
-    this.saveToStorage__T__T__V($as_T(genealogyIdInput.value), $as_T(codeTextarea.value));
+    matchResult6: {
+      var noEmptyName;
+      var x11 = $as_T(genealogyIdInput.value);
+      if ($f_T__isBlank__Z($n(x11))) {
+        var noEmptyName = "Empty name";
+        break matchResult6;
+      }
+      var noEmptyName = x11;
+    }
+    this.saveToStorage__T__T__V(noEmptyName, $as_T(codeTextarea.value));
     document.getElementById("error").textContent = "";
     document.getElementById("success").textContent = "Program saved";
   } catch (e) {
@@ -28293,6 +28309,26 @@ function $f_T__strip__T($thiz) {
       return $as_T($thiz.substring(beginIndex, endIndex));
     }
   }
+}
+function $f_T__isBlank__Z($thiz) {
+  var len = $thiz.length;
+  var start = 0;
+  while (true) {
+    if ((start !== len)) {
+      var this$1 = $m_jl_Character$();
+      var index = start;
+      var c = $charAt($thiz, index);
+      var $x_1 = this$1.isWhitespace__I__Z(c);
+    } else {
+      var $x_1 = false;
+    }
+    if ($x_1) {
+      start = ((1 + start) | 0);
+    } else {
+      break;
+    }
+  }
+  return (start === len);
 }
 function $f_T__toString__T($thiz) {
   return $thiz;
