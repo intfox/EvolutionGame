@@ -84,31 +84,26 @@ object MainPage {
 }
 
 def updateCodeTableView(currentLine: Int): Unit = {
-  for(previousLine <- dom.document.getElementsByClassName("current-line")) {
+  for(previousLine <- dom.document.getElementsByClassName("bg-blue-100")) {
     previousLine.asInstanceOf[html.TableRow].className = ""
   }
   val lineRow = dom.document.getElementById(s"line$currentLine").asInstanceOf[html.TableRow]
-  lineRow.className = "current-line"
+  lineRow.className = "bg-blue-100"
 }
 
 def initCodeTableView(code: Code): Unit = {
   val table = dom.document.getElementById("codeTable").asInstanceOf[html.Table]
   table.replaceChildren()
-  val row = dom.document.createElement("tr").asInstanceOf[html.TableRow]
-  val lineHeader = dom.document.createElement("th")
-  lineHeader.textContent = "line"
-  val commandHeader = dom.document.createElement("th")
-  commandHeader.textContent = "command"
-  row.appendChild(lineHeader)
-  row.appendChild(commandHeader)
-  table.appendChild(row)
   for((line, i) <- Interpreter.commandsToString(code.commands).zipWithIndex) {
+    val cellClass = "px-6 py-2 whitespace-nowrap text-sm text-gray-900"
     val row = dom.document.createElement("tr").asInstanceOf[html.TableRow]
     row.id = s"line$i"
     val lineCell = dom.document.createElement("td").asInstanceOf[html.TableCell]
     lineCell.textContent = i.toString
+    lineCell.className = cellClass
     val commandCell = dom.document.createElement("td").asInstanceOf[html.TableCell]
     commandCell.textContent = line
+    commandCell.className = cellClass
     row.appendChild(lineCell)
     row.appendChild(commandCell)
     table.appendChild(row)
@@ -141,30 +136,37 @@ def updateStatisticsView(map: Map[String, Statistic]): Unit = {
     tableBody.removeChild(tableBody.firstChild)
   }
 
+  val cellClass = "px-6 py-4 whitespace-nowrap text-sm text-gray-900"
   for ((genealogyId, stat) <- map) {
     val row = tableBody.insertRow().asInstanceOf[html.TableRow]
 
     val idCell = row.insertCell().asInstanceOf[html.TableCell]
     idCell.textContent = genealogyId
+    idCell.className = cellClass
 
     val countCell = row.insertCell().asInstanceOf[html.TableCell]
     countCell.textContent = stat.unitCount.toString
+    countCell.className = cellClass
   }
 }
 
 
 def checkBoxView(): Unit = {
   val gCheckboxes = dom.document.getElementById("gCheckboxes").asInstanceOf[html.Div]
-
+//  gCheckboxes.
   for((genealogyId, code) <- Editor.getFromStorage()) {
-//    println()
-    val input = dom.document.createElement("input").asInstanceOf[html.Input]
-    input.`type` = "checkbox"
+    println(s"${genealogyId}")
+    val baseCheckbox = dom.document.getElementById("gCheckboxBase").cloneNode(true).asInstanceOf[html.Div]
+    baseCheckbox.style.display = "flex"
+
+    val input = baseCheckbox.querySelector("input").asInstanceOf[html.Input]
+//    val input = dom.document.createElement("input").asInstanceOf[html.Input]
+//    input.`type` = "checkbox"
     input.id = s"check$genealogyId"
-    val label = dom.document.createElement("label").asInstanceOf[html.Label]
+//    val label = dom.document.createElement("label").asInstanceOf[html.Label]
+    val label = baseCheckbox.querySelector("label").asInstanceOf[html.Label]
     label.textContent = genealogyId
     label.htmlFor = genealogyId
-    gCheckboxes.appendChild(input)
-    gCheckboxes.appendChild(label)
+    gCheckboxes.appendChild(baseCheckbox)
   }
 }
