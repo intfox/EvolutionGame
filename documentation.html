@@ -220,7 +220,7 @@ A5 = 2</code></pre>
             <ul>
                 <li><strong>Описание:</strong> Суммирует значение первого операнда (содержимое <strong>адреса памяти</strong>) со значением второго операнда (содержимое другого <strong>адреса памяти</strong> или <strong>число</strong>) и записывает результат обратно в <strong>первый адрес памяти</strong>.</li>
                 <li><strong>Затраты энергии:</strong> 1 единица.</li>
-                <li><strong>Пример:</strong> <code>ADD B1, C2</code> (B1 = B1 + C2); <code>ADD D3, 5</code> (D3 = D3 + 5)</li>
+                <li><strong>Пример:</strong> <code>ADD A1, A2</code> (A1 = A1 + A2); <code>ADD A3, 5</code> (A3 = A3 + 5)</li>
             </ul>
         </li>
         <li>
@@ -228,7 +228,7 @@ A5 = 2</code></pre>
             <ul>
                 <li><strong>Описание:</strong> Вычитает значение второго операнда (содержимое <strong>адреса памяти</strong> или <strong>число</strong>) из значения первого операнда (содержимое <strong>адреса памяти</strong>) и записывает результат обратно в <strong>первый адрес памяти</strong>.</li>
                 <li><strong>Затраты энергии:</strong> 1 единица.</li>
-                <li><strong>Пример:</strong> <code>SUB E1, F2</code> (E1 = E1 - F2); <code>SUB G3, 10</code> (G3 = G3 - 10)</li>
+                <li><strong>Пример:</strong> <code>SUB A1, A2</code> (A1 = A1 - A2); <code>SUB A3, 10</code> (A3 = A3 - 10)</li>
             </ul>
         </li>
         <li>
@@ -236,7 +236,7 @@ A5 = 2</code></pre>
             <ul>
                 <li><strong>Описание:</strong> Генерирует случайное целое число в диапазоне от 0 до <strong>максимального значения</strong> (включительно) и записывает его в указанный <strong>адрес памяти</strong>.</li>
                 <li><strong>Затраты энергии:</strong> 1 единица.</li>
-                <li><strong>Пример:</strong> <code>RAND H1, 100</code> (H1 = случайное число от 0 до 100)</li>
+                <li><strong>Пример:</strong> <code>RAND A1, 100</code> (A1 = случайное число от 0 до 100)</li>
             </ul>
         </li>
         <li>
@@ -244,7 +244,7 @@ A5 = 2</code></pre>
             <ul>
                 <li><strong>Описание:</strong> Безусловно переводит выполнение кода к указанной <strong>метке</strong> или <strong>номеру строки</strong>.</li>
                 <li><strong>Затраты энергии:</strong> 1 единица.</li>
-                <li><strong>Пример:</strong> <code>GOTO LOOP_START</code>; <code>GOTO 15</code></li>
+                <li><strong>Пример:</strong> <code>GOTO LOOPSTART</code>; <code>GOTO 15</code></li>
             </ul>
         </li>
         <li>
@@ -252,7 +252,7 @@ A5 = 2</code></pre>
             <ul>
                 <li><strong>Описание:</strong> Определяет точку в коде, к которой можно перейти с помощью команды <code>GOTO</code> или <code>IF</code>. Каждая программа юнита должна содержать хотя бы одну метку <code>START:</code>.</li>
                 <li><strong>Затраты энергии:</strong> 0 единиц (бесплатно).</li>
-                <li><strong>Пример:</strong> <code>START:</code> (начало программы); <code>SEARCH_FOOD:</code> (метка для поиска еды)</li>
+                <li><strong>Пример:</strong> <code>START:</code> (начало программы); <code>SEARCHFOOD:</code> (метка для поиска еды)</li>
             </ul>
         </li>
         <li>
@@ -268,7 +268,7 @@ A5 = 2</code></pre>
                     </ul>
                 </li>
                 <li><strong>Затраты энергии:</strong> 2 единицы.</li>
-                <li><strong>Пример:</strong> <code>IF A1 &gt; 0 GOTO FOUND_FOOD</code> (если в A1 больше нуля, перейти к метке FOUND_FOOD)</li>
+                <li><strong>Пример:</strong> <code>IF A1 &gt; 0 GOTO FOUNDFOOD</code> (если в A1 больше нуля, перейти к метке FOUNDFOOD)</li>
             </ul>
         </li>
     </ul>
