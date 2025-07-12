@@ -2212,7 +2212,7 @@ $c_LMainPage$.prototype.run__V = (function() {
       var x$1$1 = $as_T2(x$1);
       return ((x$1$1 !== null) && ($as_T($n(x$1$1).T2__f__1), $as_T($n(x$1$1).T2__f__2), true));
     }));
-    world.sr_ObjectRef__f_elem = new $c_LWorld($as_sci_List($n($n($as_sc_IterableOps($ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$11, p).map__F1__O(new $c_sjsr_AnonFunction1_$$Lambda$3aa60c34ef08a878abffbf4628007cc68fa3c7ab(((x$1$2) => {
+    var $x_1 = $as_sci_List($n($n($as_sc_IterableOps($ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$11, p).map__F1__O(new $c_sjsr_AnonFunction1_$$Lambda$3aa60c34ef08a878abffbf4628007cc68fa3c7ab(((x$1$2) => {
       var x$1$3 = $as_T2(x$1$2);
       if ((x$1$3 !== null)) {
         var genealogyId$1 = $as_T($n(x$1$3).T2__f__1);
@@ -2249,7 +2249,10 @@ $c_LMainPage$.prototype.run__V = (function() {
         }
       }
       throw new $c_s_MatchError(x$1$5);
-    })))), 10);
+    }))));
+    var this$15 = $ct_s_util_Random__(new $c_s_util_Random());
+    var this$16 = $n(this$15.s_util_Random__f_self);
+    world.sr_ObjectRef__f_elem = new $c_LWorld($x_1, this$16.next__I__I(32));
   });
   document.getElementById("speed1").onclick = ((_$3) => {
     if ((speed.sr_IntRef__f_elem !== 1)) {
@@ -12751,6 +12754,35 @@ $c_ju_LinkedHashMap$AbstractLinkedHashMapIterator.prototype.next__O = (function(
   this.ju_LinkedHashMap$AbstractLinkedHashMapIterator__f_nextNode = $n(node).ju_LinkedHashMap$Node__f_younger;
   return node;
 });
+function $p_ju_Random$__randomInt__I($thiz) {
+  var a = (4.294967296E9 * $uD(Math.random()));
+  return $doubleToInt(($uD(Math.floor(a)) - 2.147483648E9));
+}
+/** @constructor */
+function $c_ju_Random$() {
+}
+$c_ju_Random$.prototype = new $h_O();
+$c_ju_Random$.prototype.constructor = $c_ju_Random$;
+/** @constructor */
+function $h_ju_Random$() {
+}
+$h_ju_Random$.prototype = $c_ju_Random$.prototype;
+$c_ju_Random$.prototype.java$util$Random$$randomSeed__J = (function() {
+  var value = $p_ju_Random$__randomInt__I(this);
+  var value$1 = $p_ju_Random$__randomInt__I(this);
+  return new $c_RTLong(value$1, value);
+});
+var $d_ju_Random$ = new $TypeData().initClass($c_ju_Random$, "java.util.Random$", ({
+  ju_Random$: 1,
+  Ljava_io_Serializable: 1
+}));
+var $n_ju_Random$;
+function $m_ju_Random$() {
+  if ((!$n_ju_Random$)) {
+    $n_ju_Random$ = new $c_ju_Random$();
+  }
+  return $n_ju_Random$;
+}
 /** @constructor */
 function $c_ju_internal_GenericArrayOps$ReusableAnyRefArrayOps$() {
 }
@@ -13509,12 +13541,16 @@ function $ct_s_util_Random__ju_Random__($thiz, self) {
   return $thiz;
 }
 function $ct_s_util_Random__J__($thiz, seed) {
-  $ct_s_util_Random__ju_Random__($thiz, new $c_ju_Random(seed));
+  $ct_s_util_Random__ju_Random__($thiz, $ct_ju_Random__J__(new $c_ju_Random(), seed));
   return $thiz;
 }
 function $ct_s_util_Random__I__($thiz, seed) {
   var hi = (seed >> 31);
   $ct_s_util_Random__J__($thiz, new $c_RTLong(seed, hi));
+  return $thiz;
+}
+function $ct_s_util_Random__($thiz) {
+  $ct_s_util_Random__ju_Random__($thiz, $ct_ju_Random__(new $c_ju_Random()));
   return $thiz;
 }
 /** @constructor */
@@ -15667,11 +15703,18 @@ function $p_ju_Random__loop$1__I__I($thiz, n$1) {
     }
   }
 }
+function $ct_ju_Random__J__($thiz, seed_in) {
+  $thiz.setSeed__J__V(seed_in);
+  return $thiz;
+}
+function $ct_ju_Random__($thiz) {
+  $ct_ju_Random__J__($thiz, $m_ju_Random$().java$util$Random$$randomSeed__J());
+  return $thiz;
+}
 /** @constructor */
-function $c_ju_Random(seed_in) {
+function $c_ju_Random() {
   this.ju_Random__f_java$util$Random$$seedHi = 0;
   this.ju_Random__f_java$util$Random$$seedLo = 0;
-  this.setSeed__J__V(seed_in);
 }
 $c_ju_Random.prototype = new $h_O();
 $c_ju_Random.prototype.constructor = $c_ju_Random;
