@@ -46,7 +46,11 @@ object Editor {
     val genealogyIdInput = dom.document.getElementById("genealogyIdInput").asInstanceOf[html.Input]
     val code = try {
       Interpreter.parse(codeTextarea.value)
-      saveToStorage(genealogyIdInput.value, codeTextarea.value)
+      val noEmptyName = genealogyIdInput.value match {
+        case s if s.isBlank => "Empty name"
+        case s => s
+      }
+      saveToStorage(noEmptyName, codeTextarea.value)
       dom.document.getElementById("error").asInstanceOf[html.Heading].textContent = ""
       dom.document.getElementById("success").asInstanceOf[html.Heading].textContent = "Program saved"
     } catch {
