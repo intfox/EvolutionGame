@@ -1,5 +1,6 @@
 import Interpreter.Command.{GoTo, Label, Move}
 import Interpreter.Direction.Up
+import scala.util.Random
 import org.scalajs.dom
 import org.scalajs.dom.{HTMLCanvasElement, HTMLElement, SVGElement, html}
 import scala.scalajs.js.annotation._
@@ -61,7 +62,7 @@ object MainPage {
         (genealogyId, code) <- Editor.getFromStorage()
         checkbox = dom.document.getElementById(s"check$genealogyId").asInstanceOf[html.Input]
         parsedCode = Interpreter.parse(code) if checkbox.checked
-      } yield PlayerUnit(genealogyId, Code(parsedCode)), 10)
+      } yield PlayerUnit(genealogyId, Code(parsedCode)), seed = Random().nextInt())
 
     dom.document.getElementById("speed1").asInstanceOf[html.Button].onclick = (_) =>
       if (speed != 1) {
