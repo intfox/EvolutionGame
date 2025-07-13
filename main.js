@@ -2087,6 +2087,9 @@ $c_LMainPage$.prototype.run__V = (function() {
         if ((($n(unit).LUnitObject__f_x === x) && ($n(unit).LUnitObject__f_y === y))) {
           observedUnitId.sr_IntRef__f_elem = $n(unit).LUnitObject__f_id;
           $m_LMain$package$().initCodeTableView__LCode__V($n($n(unit).LUnitObject__f_program).LProgram__f_code);
+          var $x_1 = $m_LMain$package$();
+          var this$10 = $n($n($as_LWorld(world.sr_ObjectRef__f_elem)).LWorld__f_statistics);
+          $x_1.updateStatisticsView__sci_Map__T__V($m_sci_Map$().from__sc_IterableOnce__sci_Map(this$10), $n(unit).LUnitObject__f_genealogyId);
           $m_LWorldCanvas$().LWorldCanvas$__f_observedUnitId = observedUnitId.sr_IntRef__f_elem;
           $m_LWorldCanvas$().LWorldCanvas$__f_myGenealogyId = $n(unit).LUnitObject__f_genealogyId;
         }
@@ -2098,18 +2101,18 @@ $c_LMainPage$.prototype.run__V = (function() {
   var elem = $p_LMainPage$__startInterval$1__sr_IntRef__sr_ObjectRef__sr_IntRef__sjs_js_timers_SetIntervalHandle(this, speed, world, observedUnitId);
   var intervalHandler = new $c_sr_ObjectRef(elem);
   document.getElementById("start").onclick = ((_$2) => {
-    var this$14 = $n($m_LEditor$().getFromStorage__sci_List());
+    var this$16 = $n($m_LEditor$().getFromStorage__sci_List());
     var p = new $c_sjsr_AnonFunction1_$$Lambda$3aa60c34ef08a878abffbf4628007cc68fa3c7ab(((x$1) => {
       var x$1$1 = $as_LEditor$GenerationScript(x$1);
       return ((x$1$1 !== null) && ($n(x$1$1), $n(x$1$1), true));
     }));
-    var $x_1 = $as_sci_List($n($n($as_sc_IterableOps($ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$14, p).map__F1__O(new $c_sjsr_AnonFunction1_$$Lambda$3aa60c34ef08a878abffbf4628007cc68fa3c7ab(((x$1$2) => {
+    var $x_2 = $as_sci_List($n($n($as_sc_IterableOps($ct_sc_IterableOps$WithFilter__sc_IterableOps__F1__(new $c_sc_IterableOps$WithFilter(), this$16, p).map__F1__O(new $c_sjsr_AnonFunction1_$$Lambda$3aa60c34ef08a878abffbf4628007cc68fa3c7ab(((x$1$2) => {
       var x$1$3 = $as_LEditor$GenerationScript(x$1$2);
       if ((x$1$3 !== null)) {
-        var this$16 = $n(x$1$3);
-        var x10 = this$16.LEditor$GenerationScript__f_fileName;
-        var this$17 = $n(x$1$3);
-        var x11 = this$17.LEditor$GenerationScript__f_script;
+        var this$18 = $n(x$1$3);
+        var x10 = this$18.LEditor$GenerationScript__f_fileName;
+        var this$19 = $n(x$1$3);
+        var x11 = this$19.LEditor$GenerationScript__f_script;
         var checkbox = document.getElementById(("check" + x10));
         var parsedCode = $m_LInterpreter$().parse__T__As_Option(x11);
         return new $c_T3(x$1$3, checkbox, parsedCode);
@@ -2133,8 +2136,8 @@ $c_LMainPage$.prototype.run__V = (function() {
       if ((x$1$5 !== null)) {
         var x20 = $as_LEditor$GenerationScript($n(x$1$5).T3__f__1);
         if ((x20 !== null)) {
-          var this$23 = $n(x20);
-          var x24 = this$23.LEditor$GenerationScript__f_fileName;
+          var this$25 = $n(x20);
+          var x24 = this$25.LEditor$GenerationScript__f_fileName;
           $n(x20);
           $n(x$1$5);
           var parsedCode$2 = $asArrayOf_s_Option($n(x$1$5).T3__f__3, 1);
@@ -2144,9 +2147,9 @@ $c_LMainPage$.prototype.run__V = (function() {
       }
       throw new $c_s_MatchError(x$1$5);
     }))));
-    var this$27 = $ct_s_util_Random__(new $c_s_util_Random());
-    var this$28 = $n(this$27.s_util_Random__f_self);
-    world.sr_ObjectRef__f_elem = new $c_LWorld($x_1, this$28.next__I__I(32));
+    var this$29 = $ct_s_util_Random__(new $c_s_util_Random());
+    var this$30 = $n(this$29.s_util_Random__f_self);
+    world.sr_ObjectRef__f_elem = new $c_LWorld($x_2, this$30.next__I__I(32));
   });
   document.getElementById("speed1").onclick = ((_$3) => {
     if ((speed.sr_IntRef__f_elem !== 1)) {
