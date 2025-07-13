@@ -1850,7 +1850,8 @@ function $h_LMain$package$() {
 }
 $h_LMain$package$.prototype = $c_LMain$package$.prototype;
 $c_LMain$package$.prototype.updateCodeTableView__I__V = (function(currentLine) {
-  var domList = document.getElementsByClassName("bg-blue-100");
+  var table = document.getElementById("codeTable");
+  var domList = table.querySelectorAll(".bg-blue-100");
   var this$2 = new $c_Lorg_scalajs_dom_DOMList$DOMListSeq(domList);
   var it = this$2.iterator__sc_Iterator();
   while ($n(it).hasNext__Z()) {
@@ -1936,7 +1937,7 @@ $c_LMain$package$.prototype.updateEnergy__I__V = (function(energy) {
   var doc = document.getElementById("energy");
   doc.textContent = ("Energy: " + energy);
 });
-$c_LMain$package$.prototype.updateStatisticsView__sci_Map__V = (function(map) {
+$c_LMain$package$.prototype.updateStatisticsView__sci_Map__T__V = (function(map, observedGenealogyId) {
   var tableBody = document.getElementById("statisticsTableBody");
   while ($uZ(tableBody.hasChildNodes())) {
     tableBody.removeChild(tableBody.firstChild);
@@ -1953,14 +1954,15 @@ $c_LMain$package$.prototype.updateStatisticsView__sci_Map__V = (function(map) {
       if ((x$1$3 !== null)) {
         var genealogyId$1 = $as_T($n(x$1$3)._1__O());
         var stat$1 = $as_LStatistic($n(x$1$3)._2__O());
+        var cellClass = ("px-6 py-4 whitespace-nowrap text-sm text-gray-900 " + ((observedGenealogyId === genealogyId$1) ? "bg-blue-100" : ""));
         var row = tableBody.insertRow();
         var idCell = row.insertCell();
         idCell.textContent = genealogyId$1;
-        idCell.className = "px-6 py-4 whitespace-nowrap text-sm text-gray-900";
+        idCell.className = cellClass;
         var countCell = row.insertCell();
         var this$2 = $n(stat$1).LStatistic__f_unitCount;
         countCell.textContent = ("" + this$2);
-        countCell.className = "px-6 py-4 whitespace-nowrap text-sm text-gray-900";
+        countCell.className = cellClass;
         break matchResult11;
       }
       throw new $c_s_MatchError(x$1$3);
@@ -2025,7 +2027,7 @@ function $p_LMainPage$__startInterval$1__sr_IntRef__sr_ObjectRef__sr_IntRef__sjs
       $p_LMainPage$__updateStateView$1__sr_ObjectRef__sr_IntRef__V($thiz, world$1, observedUnitId$1);
       var $x_3 = $m_LMain$package$();
       var this$5 = $n($n($as_LWorld($n(world$1).sr_ObjectRef__f_elem)).LWorld__f_statistics);
-      $x_3.updateStatisticsView__sci_Map__V($m_sci_Map$().from__sc_IterableOnce__sci_Map(this$5));
+      $x_3.updateStatisticsView__sci_Map__T__V($m_sci_Map$().from__sc_IterableOnce__sci_Map(this$5), $m_LWorldCanvas$().LWorldCanvas$__f_myGenealogyId);
     }
   })));
 }
