@@ -25,7 +25,7 @@ object MainPage {
           world.tick()
           WorldCanvas.render(world)
           updateStateView()
-          updateStatisticsView(world.statistics.toMap)
+          updateStatisticsView(world.statistics.toMap, WorldCanvas.myGenealogyId)
         }
       }
 
@@ -84,7 +84,8 @@ object MainPage {
 }
 
 def updateCodeTableView(currentLine: Int): Unit = {
-  for(previousLine <- dom.document.getElementsByClassName("bg-blue-100")) {
+  val table = dom.document.getElementById("codeTable")
+  for(previousLine <- table.querySelectorAll(".bg-blue-100")) {
     previousLine.asInstanceOf[html.TableRow].className = ""
   }
   val lineRow = dom.document.getElementById(s"line$currentLine").asInstanceOf[html.TableRow]
@@ -126,7 +127,7 @@ def updateEnergy(energy: Int): Unit = {
   doc.textContent = s"Energy: $energy"
 }
 
-def updateStatisticsView(map: Map[String, Statistic]): Unit = {
+def updateStatisticsView(map: Map[String, Statistic], observedGenealogyId: String): Unit = {
   val tableBody = dom.document.getElementById("statisticsTableBody").asInstanceOf[html.TableSection]
 
   // Clear existing rows to avoid duplicates or outdated information
@@ -136,8 +137,8 @@ def updateStatisticsView(map: Map[String, Statistic]): Unit = {
     tableBody.removeChild(tableBody.firstChild)
   }
 
-  val cellClass = "px-6 py-4 whitespace-nowrap text-sm text-gray-900"
   for ((genealogyId, stat) <- map) {
+    val cellClass = s"px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${if(observedGenealogyId == genealogyId) "bg-blue-100" else ""}"
     val row = tableBody.insertRow().asInstanceOf[html.TableRow]
 
     val idCell = row.insertCell().asInstanceOf[html.TableCell]
