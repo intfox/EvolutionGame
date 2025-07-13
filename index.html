@@ -178,7 +178,41 @@
             </div>
         </div>
     </div>
-    <script src="main.js"></script>
-    <script>MainPage.run();</script>
+    <script src="js/target/scala-3.3.6/foo-fastopt/main.js"></script>
+    <script>
+        function migrateEditorStorage() {
+          const STORAGE_KEY = 'editorStorage';
+          let oldData = localStorage.getItem(STORAGE_KEY);
+
+          if (oldData) {
+            try {
+              // Пытаемся распарсить данные как JSON
+              let parsedData = JSON.parse(oldData);
+
+              // Проверяем, соответствует ли структура старому формату (массив массивов)
+              if (Array.isArray(parsedData) && parsedData.every(item => Array.isArray(item) && item.length >= 2)) {
+                const newData = parsedData.map(item => {
+                  return {
+                    fileName: item[0],
+                    script: item[1]
+                  };
+                });
+
+                // Сохраняем новые данные обратно в localStorage
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+                console.log('Данные editorStorage успешно мигрированы.');
+              } else {
+                console.log('Данные editorStorage уже в новом формате или не требуют миграции.');
+              }
+            } catch (e) {
+              console.error('Ошибка при парсинге данных editorStorage из localStorage:', e);
+            }
+          } else {
+            console.log('Ключ editorStorage не найден в localStorage. Миграция не требуется.');
+          }
+        }
+        migrateEditorStorage();
+        MainPage.run();
+    </script>
 </body>
 </html>
