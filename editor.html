@@ -4,7 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Простой Редактор Кода</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Custom scrollbar for better aesthetics */
+        textarea::-webkit-scrollbar,
+        #lineNumbers::-webkit-scrollbar,
+        #fileList::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        textarea::-webkit-scrollbar-track,
+        #lineNumbers::-webkit-scrollbar-track,
+        #fileList::-webkit-scrollbar-track {
+            background: #e2e8f0; /* Lighter background for scrollbar track (blue-gray-200) */
+            border-radius: 10px;
+        }
+
+        textarea::-webkit-scrollbar-thumb,
+        #lineNumbers::-webkit-scrollbar-thumb,
+        #fileList::-webkit-scrollbar-thumb {
+            background: #cbd5e0; /* Lighter thumb color (blue-gray-300) */
+            border-radius: 10px;
+        }
+
+        textarea::-webkit-scrollbar-thumb:hover,
+        #lineNumbers::-webkit-scrollbar-thumb:hover,
+        #fileList::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0; /* Even lighter on hover (blue-gray-400) */
+        }
+
+        /* Ensure line numbers and textarea scroll together */
+        .scroll-sync {
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .scroll-sync::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for synchronized scrolling */
+        }
+
 
         /* Основные стили для заголовка */
         .header {
@@ -29,47 +70,9 @@
         .header nav a:hover {
             color: #007bff; /* Легкий синий цвет при наведении */
         }
-        .code-editor-container {
-            display: flex;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            overflow: hidden;
-            width: 80%;
-            max-width: 900px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-
-        .line-numbers {
-            width: 40px;
-            padding: 10px 5px;
-            background-color: #eee;
-            color: #555;
-            text-align: right;
-            border-right: 1px solid #ccc;
-            user-select: none; /* Предотвращает выделение чисел */
-            font-family: monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            overflow-y: hidden; /* Скрыть скроллбар */
-        }
-
-        .code-input {
-            flex-grow: 1;
-            border: none;
-            padding: 10px;
-            font-family: monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            outline: none; /* Убрать рамку при фокусе */
-            resize: none; /* Запретить изменение размера пользователем */
-            overflow-y: auto; /* Добавить скроллбар, если текст не помещается */
-            white-space: pre-wrap; /* Сохранять переносы строк и пробелы */
-            word-wrap: break-word; /* Переносить длинные слова */
-        }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-900 font-inter flex flex-col h-screen overflow-hidden">
 <header class="header">
     <nav>
         <a href="index.html">Мир</a>
@@ -77,64 +80,406 @@
         <a href="documentation.html">Документация</a>
     </nav>
 </header>
-<input id="genealogyIdInput" type="text">
-<select id="selectCode" onchange="Editor.onSelect()">
-</select>
-<h3 id="error" style="color:red;"></h3>
-<h3 id="success" style="color:green;"></h3>
-<div class="code-editor-container">
-    <div class="line-numbers" id="line-numbers">1</div>
-    <textarea class="code-input" id="codeInput" spellcheck="false" placeholder="Начните писать ваш код здесь..."></textarea>
+<div class="flex flex-1 overflow-hidden">
+    <!-- Left panel: File list -->
+    <div class="w-1/4 min-w-[250px] bg-white p-4 flex flex-col rounded-tr-lg rounded-br-lg shadow-lg overflow-hidden">
+        <h2 class="text-xl font-semibold mb-4 text-center text-blue-600">Файлы скриптов</h2>
+        <div class="mb-4 flex flex-col sm:flex-row gap-2">
+            <input type="text" id="newFileName" placeholder="Имя нового файла"
+                   class="flex-1 p-2 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 text-sm text-gray-800">
+            <button id="addFileBtn"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm">
+                Добавить
+            </button>
+        </div>
+        <div id="fileList" class="flex-1 overflow-y-auto pr-2">
+            <!-- File list will be here -->
+        </div>
+    </div>
+
+    <!-- Right panel: Code editor -->
+    <div class="flex-1 flex flex-col p-4 overflow-hidden">
+        <div class="flex justify-end items-center mb-4">
+            <button id="saveFileBtn"
+                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                Сохранить
+            </button>
+        </div>
+
+        <div class="flex flex-1 bg-white rounded-lg shadow-lg overflow-hidden relative">
+            <!-- Line numbers -->
+            <div id="lineNumbers" class="w-12 bg-gray-100 text-gray-500 text-right p-2 pr-2 select-none scroll-sync text-sm overflow-y-hidden">
+                1
+            </div>
+            <!-- Code editing area -->
+            <textarea id="codeEditor" spellcheck="false" disabled
+                      class="flex-1 p-2 bg-white text-gray-800 text-sm font-mono focus:outline-none resize-none scroll-sync overflow-y-scroll disabled:opacity-50 disabled:cursor-not-allowed"></textarea>
+        </div>
+    </div>
 </div>
-<button onclick="Editor.save()">Save</button>
-<button>Delete</button>
+
+<!-- Delete confirmation modal -->
+<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center text-gray-900">
+        <p class="text-lg font-semibold mb-4">Вы уверены, что хотите удалить файл <span id="fileNameToDelete" class="text-red-600"></span>?</p>
+        <div class="flex justify-center gap-4">
+            <button id="confirmDeleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out">
+                Удалить
+            </button>
+            <button id="cancelDeleteBtn" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out">
+                Отмена
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom notification -->
+<div id="notification" class="fixed bottom-4 right-4 p-4 rounded-lg shadow-lg text-white transition-opacity duration-300 hidden opacity-0 z-50">
+    <p id="notificationMessage"></p>
+</div>
 
 <script src="js/target/scala-3.3.6/foo-fastopt/main.js"></script>
-<script>Editor.run();</script>
 <script>
-    const codeInput = document.getElementById('codeInput');
-    const genealogyIdInput = document.getElementById('genealogyIdInput');
-    const lineNumbers = document.getElementById('line-numbers');
+    migrateEditorStorage()
+    const newFileNameInput = document.getElementById('newFileName');
+    const addFileBtn = document.getElementById('addFileBtn');
+    const fileListDiv = document.getElementById('fileList');
+    const codeEditor = document.getElementById('codeEditor');
+    const saveFileBtn = document.getElementById('saveFileBtn');
+    const lineNumbersDiv = document.getElementById('lineNumbers');
+    const confirmModal = document.getElementById('confirmModal');
+    const fileNameToDeleteSpan = document.getElementById('fileNameToDelete');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const notificationDiv = document.getElementById('notification');
+    const notificationMessage = document.getElementById('notificationMessage');
 
-    let tempSave = localStorage.getItem("tempSave")
-    if(tempSave) {
-        codeInput.value = tempSave
-        genealogyIdInput.value = localStorage.getItem("tempSaveName")
-        updateLineNumbers()
-    }
+    let scripts = [];
+    let currentFileIndex = -1; // Index of the currently active script in the 'scripts' array
+    let notificationTimeout;
+    let tempSaveData = []; // Global variable for tempSave data, now an array
 
-    // Функция для обновления нумерации строк
-    function updateLineNumbers() {
-        const lines = codeInput.value.split('\n');
-        let numbersHtml = '';
-        for (let i = 0; i <= lines.length - 1; i++) {
-            numbersHtml += `<div>${i}</div>`;
+    // Function to show custom notification
+    function showNotification(message, type = 'success') {
+        clearTimeout(notificationTimeout); // Clear any existing timeout
+
+        notificationMessage.textContent = message;
+        notificationDiv.classList.remove('bg-green-600', 'bg-red-600'); // Reset colors
+
+        if (type === 'success') {
+            notificationDiv.classList.add('bg-green-600');
+        } else if (type === 'error') {
+            notificationDiv.classList.add('bg-red-600');
         }
-        lineNumbers.innerHTML = numbersHtml;
 
-        // Синхронизация прокрутки
-        lineNumbers.scrollTop = codeInput.scrollTop;
+        notificationDiv.classList.remove('hidden', 'opacity-0');
+        notificationDiv.classList.add('opacity-100');
+
+        notificationTimeout = setTimeout(() => {
+            notificationDiv.classList.remove('opacity-100');
+            notificationDiv.classList.add('opacity-0');
+            setTimeout(() => {
+                notificationDiv.classList.add('hidden');
+            }, 300); // Wait for fade out transition
+        }, 3000); // Notification visible for 3 seconds
     }
 
-    // Обновляем нумерацию при вводе текста
-    codeInput.addEventListener('input', updateLineNumbers);
+    // Function to load tempSave from localStorage
+    function loadTempSaveData() {
+        const storedTempSave = localStorage.getItem('tempSave');
+        if (storedTempSave) {
+            try {
+                tempSaveData = JSON.parse(storedTempSave);
+            } catch (e) {
+                console.error("Ошибка при парсинге данных tempSave из localStorage:", e);
+                tempSaveData = []; // Initialize as array on error
+            }
+        } else {
+            tempSaveData = []; // Initialize as array if not found
+        }
+    }
 
-    // Обновляем нумерацию при прокрутке текстового поля
-    codeInput.addEventListener('scroll', () => {
-        lineNumbers.scrollTop = codeInput.scrollTop;
+    // Function to save content to tempSave for a specific file
+    function saveTempContent(fileName, content) {
+        if (!fileName) return;
+
+        let found = false;
+        for (let i = 0; i < tempSaveData.length; i++) {
+            if (tempSaveData[i].fileName === fileName) {
+                tempSaveData[i].script = content;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            tempSaveData.push({ fileName: fileName, script: content });
+        }
+        localStorage.setItem('tempSave', JSON.stringify(tempSaveData));
+        renderFileList(); // Re-render to show/hide unsaved indicator
+    }
+
+    // Function to clear content from tempSave for a specific file
+    function clearTempContent(fileName) {
+        if (!fileName) return;
+        tempSaveData = tempSaveData.filter(item => item.fileName !== fileName);
+        localStorage.setItem('tempSave', JSON.stringify(tempSaveData));
+        renderFileList(); // Re-render to remove unsaved indicator
+    }
+
+    // Function to load scripts from Local Storage
+    function loadScripts() {
+        const storedScripts = localStorage.getItem('editorStorage');
+        if (storedScripts) {
+            try {
+                scripts = JSON.parse(storedScripts);
+            } catch (e) {
+                console.error("Ошибка при парсинге данных из localStorage:", e);
+                scripts = []; // Reset if data is corrupted
+            }
+        } else {
+            scripts = [];
+        }
+        renderFileList();
+        // Select the first file if available, otherwise clear editor and disable
+        if (scripts.length > 0) {
+            selectFile(0);
+        } else {
+            codeEditor.value = '';
+            currentFileIndex = -1;
+            toggleEditorState(false); // Disable editor if no files
+        }
+        updateLineNumbers(); // Initial line numbers update
+    }
+
+    // Function to save scripts to Local Storage
+    function saveScripts() {
+        localStorage.setItem('editorStorage', JSON.stringify(scripts));
+    }
+
+    // Function to render the file list in the left panel
+    function renderFileList() {
+        fileListDiv.innerHTML = '';
+        if (scripts.length === 0) {
+            fileListDiv.innerHTML = '<p class="text-gray-500 text-center mt-4">Нет файлов. Добавьте новый.</p>';
+            return;
+        }
+        scripts.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            // Updated classes for light theme
+            fileItem.className = `flex items-center justify-between p-2 mb-2 rounded-md cursor-pointer transition duration-200 ease-in-out ${index === currentFileIndex ? 'bg-blue-200 text-blue-800 shadow-inner' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`;
+            fileItem.dataset.index = index;
+
+            const fileNameSpan = document.createElement('span');
+            fileNameSpan.className = 'text-sm truncate flex-1'; // Truncate long names and take available space
+
+            // Check for unsaved changes
+            const tempEntry = tempSaveData.find(item => item.fileName === file.fileName);
+            const hasUnsavedChanges = tempEntry && tempEntry.script !== file.script;
+
+            fileNameSpan.textContent = file.fileName;
+            if (hasUnsavedChanges) {
+                const unsavedIndicator = document.createElement('span');
+                unsavedIndicator.textContent = ' *'; // Add a star
+                unsavedIndicator.className = 'text-red-500 font-bold ml-1'; // Style the star
+                fileNameSpan.appendChild(unsavedIndicator);
+            }
+
+            const deleteIcon = document.createElement('button');
+            deleteIcon.innerHTML = '&times;'; // Cross character
+            // Updated classes for delete icon in light theme
+            deleteIcon.className = 'ml-2 text-red-500 hover:text-red-700 font-bold text-xl leading-none p-1 rounded-full hover:bg-gray-300 focus:outline-none';
+            deleteIcon.title = `Удалить файл ${file.fileName}`;
+            deleteIcon.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent file selection when clicking delete
+                showDeleteConfirmModal(index);
+            });
+
+            fileItem.appendChild(fileNameSpan);
+            fileItem.appendChild(deleteIcon);
+            fileListDiv.appendChild(fileItem);
+
+            fileItem.addEventListener('click', () => selectFile(index));
+        });
+    }
+
+    // Function to select a file for editing
+    function selectFile(index) {
+        // Save current editor content to tempSave before switching
+        if (currentFileIndex !== -1 && scripts[currentFileIndex]) {
+            saveTempContent(scripts[currentFileIndex].fileName, codeEditor.value);
+        }
+
+        if (index < 0 || index >= scripts.length) {
+            console.warn("Attempted to select a non-existent file.");
+            toggleEditorState(false); // Disable editor if selection is invalid
+            return;
+        }
+
+        currentFileIndex = index;
+        const selectedFileName = scripts[currentFileIndex].fileName;
+
+        // Load content: prioritize tempSave, then permanent storage
+        const tempEntry = tempSaveData.find(item => item.fileName === selectedFileName);
+        codeEditor.value = tempEntry ? tempEntry.script : scripts[currentFileIndex].script;
+
+        renderFileList(); // Update active state in file list
+        updateLineNumbers();
+        toggleEditorState(true); // Enable editor
+        codeEditor.focus(); // Focus on the editor after selecting a file
+    }
+
+    // Function to enable/disable editor and save button
+    function toggleEditorState(enable) {
+        codeEditor.disabled = !enable;
+        saveFileBtn.disabled = !enable;
+        if (!enable) {
+            codeEditor.value = ''; // Clear editor when disabled
+            updateLineNumbers(); // Reset line numbers
+        }
+    }
+
+    // Add File button click handler
+    addFileBtn.addEventListener('click', () => {
+        const fileName = newFileNameInput.value.trim();
+        if (!fileName) {
+            showNotification('Пожалуйста, введите имя файла.', 'error');
+            return;
+        }
+        if (scripts.some(s => s.fileName === fileName)) {
+            showNotification(`Файл с именем "${fileName}" уже существует.`, 'error');
+            return;
+        }
+
+        // Save current editor content to tempSave before adding new file
+        if (currentFileIndex !== -1 && scripts[currentFileIndex]) {
+            saveTempContent(scripts[currentFileIndex].fileName, codeEditor.value);
+        }
+
+        const newScript = {
+            fileName: fileName,
+            script: ''
+        };
+        scripts.push(newScript);
+        saveScripts();
+        newFileNameInput.value = ''; // Clear input
+        loadScripts(); // Reload and select the new file
+        selectFile(scripts.length - 1); // Select the newly added file
+        showNotification('Файл успешно добавлен!', 'success');
     });
 
 
-    function temporarySave() {
-        localStorage.setItem("tempSave", codeInput.value)
-        localStorage.setItem("tempSaveName", genealogyIdInput.value)
+    // Save File button click handler
+    saveFileBtn.addEventListener('click', () => {
+        if (currentFileIndex === -1) {
+            // This case should ideally not happen if button is disabled correctly
+            showNotification('Пожалуйста, выберите или создайте файл для сохранения.', 'error');
+            return;
+        }
+
+        const validationResult = Editor.validateCode(codeEditor.value); // Call the validation function
+
+        if (validationResult.success) {
+            scripts[currentFileIndex].script = codeEditor.value;
+            saveScripts();
+            clearTempContent(scripts[currentFileIndex].fileName); // Clear tempSave after permanent save
+            showNotification('Файл успешно сохранен!', 'success');
+        } else {
+            showNotification(`${validationResult.error}`, 'error');
+        }
+    });
+
+    // Show delete confirmation modal
+    function showDeleteConfirmModal(indexToDelete) {
+        fileNameToDeleteSpan.textContent = scripts[indexToDelete].fileName;
+        confirmModal.dataset.indexToDelete = indexToDelete; // Store index for confirmation
+        confirmModal.classList.remove('hidden');
     }
 
-    genealogyIdInput.addEventListener('input', temporarySave);
-    codeInput.addEventListener('input', temporarySave);
+    // Confirm delete button click handler
+    confirmDeleteBtn.addEventListener('click', () => {
+        const indexToDelete = parseInt(confirmModal.dataset.indexToDelete, 10);
+        if (!isNaN(indexToDelete) && indexToDelete >= 0 && indexToDelete < scripts.length) {
+            const deletedFileName = scripts[indexToDelete].fileName; // Get file name before splicing
+            scripts.splice(indexToDelete, 1);
+            saveScripts();
+            clearTempContent(deletedFileName); // Clear tempSave for the deleted file
 
-    // Инициализация при загрузке страницы
-    updateLineNumbers();
+            confirmModal.classList.add('hidden');
+            loadScripts(); // Reload all scripts and clear editor if no files left
+            showNotification('Файл успешно удален!', 'success');
+        } else {
+            console.error("Invalid file index for deletion.");
+            confirmModal.classList.add('hidden'); // Hide modal even on error
+            showNotification('Произошла ошибка при удалении файла.', 'error');
+        }
+    });
+
+    // Cancel delete button click handler
+    cancelDeleteBtn.addEventListener('click', () => {
+        confirmModal.classList.add('hidden');
+    });
+
+    // Line number generation and synchronization
+    function updateLineNumbers() {
+        const lines = codeEditor.value.split('\n');
+        const lineCount = lines.length;
+        let lineNumbersHtml = '';
+        for (let i = 0; i <= lineCount-1; i++) {
+            lineNumbersHtml += `${i}<br>`;
+        }
+        lineNumbersDiv.innerHTML = lineNumbersHtml;
+    }
+
+    // Synchronize scrolling between editor and line numbers
+    codeEditor.addEventListener('scroll', () => {
+        lineNumbersDiv.scrollTop = codeEditor.scrollTop;
+    });
+
+    // Add auto-save to tempSave on editor input
+    codeEditor.addEventListener('input', () => {
+        updateLineNumbers(); // Existing line number update
+        if (currentFileIndex !== -1 && scripts[currentFileIndex]) {
+            saveTempContent(scripts[currentFileIndex].fileName, codeEditor.value);
+        }
+    });
+
+    // Initial load of scripts and tempSave when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        loadTempSaveData(); // Load tempSave data first
+        loadScripts();
+    });
+
+    function migrateEditorStorage() {
+      const STORAGE_KEY = 'editorStorage';
+      let oldData = localStorage.getItem(STORAGE_KEY);
+
+      if (oldData) {
+        try {
+          // Пытаемся распарсить данные как JSON
+          let parsedData = JSON.parse(oldData);
+
+          // Проверяем, соответствует ли структура старому формату (массив массивов)
+          if (Array.isArray(parsedData) && parsedData.every(item => Array.isArray(item) && item.length >= 2)) {
+            const newData = parsedData.map(item => {
+              return {
+                fileName: item[0],
+                script: item[1]
+              };
+            });
+
+            // Сохраняем новые данные обратно в localStorage
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+            console.log('Данные editorStorage успешно мигрированы.');
+          } else {
+            console.log('Данные editorStorage уже в новом формате или не требуют миграции.');
+          }
+        } catch (e) {
+          console.error('Ошибка при парсинге данных editorStorage из localStorage:', e);
+        }
+      } else {
+        console.log('Ключ editorStorage не найден в localStorage. Миграция не требуется.');
+      }
+    }
 </script>
 </body>
 </html>

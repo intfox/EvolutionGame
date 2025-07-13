@@ -59,7 +59,7 @@ object MainPage {
 
     dom.document.getElementById("start").asInstanceOf[html.Button].onclick = (_) =>
       world = World(for {
-        (genealogyId, code) <- Editor.getFromStorage()
+        Editor.GenerationScript(genealogyId, code) <- Editor.getFromStorage()
         checkbox = dom.document.getElementById(s"check$genealogyId").asInstanceOf[html.Input]
         parsedCode = Interpreter.parse(code) if checkbox.checked
       } yield PlayerUnit(genealogyId, Code(parsedCode)), seed = Random().nextInt())
@@ -154,7 +154,7 @@ def updateStatisticsView(map: Map[String, Statistic]): Unit = {
 def checkBoxView(): Unit = {
   val gCheckboxes = dom.document.getElementById("gCheckboxes").asInstanceOf[html.Div]
 //  gCheckboxes.
-  for((genealogyId, code) <- Editor.getFromStorage()) {
+  for(Editor.GenerationScript(genealogyId, code) <- Editor.getFromStorage()) {
     println(s"${genealogyId}")
     val baseCheckbox = dom.document.getElementById("gCheckboxBase").cloneNode(true).asInstanceOf[html.Div]
     baseCheckbox.style.display = "flex"
