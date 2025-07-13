@@ -479,6 +479,17 @@
       } else {
         console.log('Ключ editorStorage не найден в localStorage. Миграция не требуется.');
       }
+      let tempOldData = localStorage.getItem('tempSave');
+      if(tempOldData) {
+        try {
+          let parsedData = JSON.parse(tempOldData)
+          if (!Array.isArray(tempOldData)) {
+            localStorage.setItem('tempSave', JSON.stringify([]))
+          }
+        } catch (e) {
+          localStorage.setItem('tempSave', JSON.stringify([]))
+        }
+      }
     }
 </script>
 </body>
