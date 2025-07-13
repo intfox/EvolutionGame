@@ -45,6 +45,7 @@ object MainPage {
           if (unit.x == x && unit.y == y) {
             observedUnitId = unit.id
             initCodeTableView(unit.program.code)
+            updateStatisticsView(world.statistics.toMap, unit.genealogyId)
             WorldCanvas.observedUnitId = observedUnitId
             WorldCanvas.myGenealogyId = unit.genealogyId
           }
